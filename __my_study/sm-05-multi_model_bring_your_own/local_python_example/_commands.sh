@@ -1,0 +1,1 @@
+cd "/Users/marian.dumitrascu/Dropbox/Learn/AWS-ML-Certification/md-aws-ml-labs/__my_study/sage-05-multi_model_bring_your_own/local_python_example"

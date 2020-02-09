@@ -246,7 +246,7 @@ $RECYCLE.BIN/
 
 z-*
 z_*
-**/data/model*
+**/data/*
 *.gz
 *.zip
 *.tfrecords
