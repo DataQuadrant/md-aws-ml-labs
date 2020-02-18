@@ -25,3 +25,13 @@ sudo chown "$USER":"$USER" /home/"$USER"/.docker -R
 sudo chmod g+rwx "$HOME/.docker" -R
 sudo chmod 666 /var/run/docker.sock
 
+#################################################################################################
+
+# build the base
+docker build -t dataquadrant/sagemaker-notebook-base:test base
+
+docker build -t dataquadrant/sagemaker-notebook:all_md -f envs/docker/Dockerfile envs
+docker push dataquadrant/sagemaker-notebook:all_md
+
+
+

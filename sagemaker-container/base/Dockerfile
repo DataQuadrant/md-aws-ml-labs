@@ -1,17 +1,16 @@
 # ==================================================================
 # Container mimicking SageMaker noteboook instance
 # ------------------------------------------------------------------
-
 ARG UBUNTU_VERSION=18.04
 FROM ubuntu:${UBUNTU_VERSION}
 
-# ARG MINICONDA_VERSION=4.5.12
-# ARG CONDA_VERSION=4.5.12
+LABEL maintainer="Marian Dumitrascu <marian@dataquadrant.com>"
 
-ARG MINICONDA_VERSION=4.7.12
-ARG CONDA_VERSION=4.7.12
+ARG MINICONDA_VERSION=4.5.12
+ARG CONDA_VERSION=4.5.12
 
-
+# ARG MINICONDA_VERSION=4.7.12
+# ARG CONDA_VERSION=4.7.12
 
 # ==================================================================
 # From Jupyter's base-notebook
@@ -113,8 +112,10 @@ RUN conda install --quiet --yes 'tini=0.18.0' && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
 
-ARG JUPYTER_NB_VERSION=6.0.0
-ARG JUPYTER_LAB_VERSION=1.0.4
+##########################################################################################################
+ARG JUPYTER_NB_VERSION=6.0.3
+ARG JUPYTER_LAB_VERSION=1.2.6
+##########################################################################################################
 
 # Install Jupyter Notebook, Lab, and Hub
 # Generate a notebook server config
@@ -134,8 +135,6 @@ RUN conda install --quiet --yes \
     rm -rf /home/$NB_USER/.cache/yarn && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
-
-
 
 # ==================================================================
 # From Jupyter's minimal-notebook
@@ -169,9 +168,29 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
     tzdata \
     unzip \
     nano \
+######################################################################################
+    iptables \
+    iproute2 \
+    mc \
+    curl \
+    ruby-full \
+######################################################################################
     && rm -rf /var/lib/apt/lists/*
 
+######################################################################################
+# install homebrew
 
+RUN localedef -i en_US -f UTF-8 en_US.UTF-8
+
+RUN useradd -m -s /bin/bash linuxbrew && \
+    echo 'linuxbrew ALL=(ALL) NOPASSWD:ALL' >>/etc/sudoers
+
+USER linuxbrew
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+
+USER root
+ENV PATH="/home/linuxbrew/.linuxbrew/bin:${PATH}"
+#####################################################################################
 
 # ==================================================================
 # Install ffmpeg for matplotlib anim
@@ -184,8 +203,6 @@ USER root
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ffmpeg && \
     rm -rf /var/lib/apt/lists/*
-
-
 
 # ==================================================================
 # Set up Conda Tab
@@ -237,8 +254,6 @@ USER $NB_UID
 # Download examples
 RUN $SAMPLE_NOTEBOOKS_DIR/update_examples.sh
 
-
-
 # ==================================================================
 # Add Git to JupyterLab
 # ------------------------------------------------------------------
@@ -258,8 +273,6 @@ RUN conda install --yes "jupyterlab-git" && \
     jupyter serverextension enable --py jupyterlab_git && \
     npm cache clean --force
 
-
-
 # ==================================================================
 # Install other important tools including docker cli, awscli
 # docker installation guide: https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-using-the-repository
@@ -267,7 +280,7 @@ RUN conda install --yes "jupyterlab-git" && \
 
 USER $NB_UID
 
-ARG DOCKER_VERSION=19.03.1
+ARG DOCKER_VERSION=19.03.5
 
 # Install Docker cli, the actual docker daemon is expected to be running on host with a mount of /var/run/docker.sock
 RUN cd /tmp && \
@@ -279,11 +292,19 @@ RUN cd /tmp && \
 # Allow $NB_USER to run docker without having to specify sudo everytime
 RUN echo "alias docker='sudo /usr/bin/docker'" >> $HOME/.bashrc
 
+#########################################################################
+# config docker
+# RUN sudo usermod -aG docker ${NB_USER}
+# re-login
+# RUN sudo chown "$NB_USER":"$NB_USER" /home/"$NB_USER"/.docker -R && \
+#     sudo chmod g+rwx "$HOME/.docker" -R && \
+#     sudo chmod 666 /var/run/docker.sock
+#########################################################################
+
+
 RUN df -h
 
 RUN pip install --no-cache-dir awscli
-
-
 
 # ==================================================================
 # Install optional packages (downside: these result in larger images)
@@ -298,6 +319,55 @@ RUN if [ ! -z $INSTALL_OPTIONAL_PACKAGES]; then \
     apt-get update && apt-get install -yq --no-install-recommends $INSTALL_OPTIONAL_PACKAGES; \
     fi \
     && rm -rf /var/lib/apt/lists/*
+
+#####################################################################################
+# install kubectl
+RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+RUN chmod +x ./kubectl
+RUN mv ./kubectl /usr/local/bin
+#####################################################################################
+
+#####################################################################################
+# spark
+
+ENV APACHE_SPARK_VERSION 2.4.4
+ENV HADOOP_VERSION 2.7
+
+RUN apt-get -y update && \
+    apt-get install --no-install-recommends -y openjdk-8-jre-headless ca-certificates-java && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN cd /tmp && \
+    wget -q http://mirrors.ukfast.co.uk/sites/ftp.apache.org/spark/spark-${APACHE_SPARK_VERSION}/spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz && \
+    echo "2E3A5C853B9F28C7D4525C0ADCB0D971B73AD47D5CCE138C85335B9F53A6519540D3923CB0B5CEE41E386E49AE8A409A51AB7194BA11A254E037A848D0C4A9E5 *spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz" | sha512sum -c - && \
+    tar xzf spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz -C /usr/local --owner root --group root --no-same-owner && \
+    rm spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz
+RUN cd /usr/local && ln -s spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION} spark
+
+# # Mesos dependencies
+# # Install from the Xenial Mesosphere repository since there does not (yet)
+# # exist a Bionic repository and the dependencies seem to be compatible for now.
+# COPY mesos.key /tmp/
+# RUN apt-get -y update && \
+#     apt-get install --no-install-recommends -y gnupg && \
+#     apt-key add /tmp/mesos.key && \
+#     echo "deb http://repos.mesosphere.io/ubuntu xenial main" > /etc/apt/sources.list.d/mesosphere.list && \
+#     apt-get -y update && \
+#     apt-get --no-install-recommends -y install mesos=1.2\* && \
+#     apt-get purge --auto-remove -y gnupg && \
+#     rm -rf /var/lib/apt/lists/*
+
+# Spark and Mesos config
+ENV SPARK_HOME /usr/local/spark
+ENV PYTHONPATH $SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.7-src.zip
+# ENV MESOS_NATIVE_LIBRARY /usr/local/lib/libmesos.so
+ENV SPARK_OPTS --driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=info
+
+
+######################################################################################
+
+
+
 
 
 
