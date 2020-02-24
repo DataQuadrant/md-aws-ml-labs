@@ -1,0 +1,53 @@
+// Table Staging with Hive and Staging-Unsupported Data Nodes
+// Consider a scenario using a HiveActivity with DynamoDBDataNode as data input and an S3DataNode object as the output.
+// No data staging is available for DynamoDBDataNode, therefore you must first manually create the table within your hive script,
+// using the variable name #{input.tableName} to refer to the DynamoDB table.
+
+// Similar nomenclature applies if the DynamoDB table is the output, except you use variable #{output.tableName}.
+// Staging is available for the output S3DataNode object in this example, therefore you can refer to the output data node as ${output1}.
+
+// Note
+// In this example, the table name variable has the # (hash) character prefix because AWS Data Pipeline uses expressions
+// to access the tableName or directoryPath.
+
+{
+    "id": "MyHiveActivity",
+    "type": "HiveActivity",
+    "schedule": {
+      "ref": "MySchedule"
+    },
+    "runsOn": {
+      "ref": "MyEmrResource"
+    },
+    "input": {
+      "ref": "MyDynamoData"
+    },
+    "output": {
+      "ref": "MyS3Data"
+    },
+    "hiveScript": "-- Map DynamoDB Table
+  SET dynamodb.endpoint=dynamodb.us-east-1.amazonaws.com;
+  SET dynamodb.throughput.read.percent = 0.5;
+  CREATE EXTERNAL TABLE dynamodb_table (item map<string,string>)
+  STORED BY 'org.apache.hadoop.hive.dynamodb.DynamoDBStorageHandler'
+  TBLPROPERTIES ("dynamodb.table.name" = "#{input.tableName}");
+  INSERT OVERWRITE TABLE ${output1} SELECT * FROM dynamodb_table;"
+  },
+  {
+    "id": "MyDynamoData",
+    "type": "DynamoDBDataNode",
+    "schedule": {
+      "ref": "MySchedule"
+    },
+    "tableName": "MyDDBTable"
+  },
+  {
+    "id": "MyS3Data",
+    "type": "S3DataNode",
+    "schedule": {
+      "ref": "MySchedule"
+    },
+    "directoryPath": "s3://test-hive/output"
+    }
+  },
+  ...

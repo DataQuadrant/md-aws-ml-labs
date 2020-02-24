@@ -1,0 +1,31 @@
+{
+    "objects": [
+      {
+        "id": "Hourly",
+        "type": "Schedule",
+        "startDateTime": "2020-02-20T07:48:00",
+        "endDateTime": "2020-03-20T07:48:00",
+        "period": "1 hours"
+      },
+      {
+        "id": "MyCluster",
+        "type": "EmrCluster",
+        "masterInstanceType": "t2.medium",
+        "region": "us-east-2",
+        "schedule": {
+          "ref": "Hourly"
+        }
+      },
+      {
+        "id": "MyEmrActivity",
+        "type": "EmrActivity",
+        "schedule": {
+          "ref": "Hourly"
+        },
+        "runsOn": {
+          "ref": "MyCluster"
+        },
+        "step": "/home/hadoop/contrib/streaming/hadoop-streaming.jar,-input,s3n://elasticmapreduce/samples/wordcount/input,-output,s3://myawsbucket/wordcount/output/#{@scheduledStartTime},-mapper,s3n://elasticmapreduce/samples/wordcount/wordSplitter.py,-reducer,aggregate"
+      }
+    ]
+  }

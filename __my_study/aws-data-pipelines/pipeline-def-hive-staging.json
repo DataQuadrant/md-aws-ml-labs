@@ -1,0 +1,36 @@
+{
+    "id": "MyHiveActivity",
+    "type": "HiveActivity",
+    "schedule": {
+      "ref": "MySchedule"
+    },
+    "runsOn": {
+      "ref": "MyEmrResource"
+    },
+    "input": {
+      "ref": "MyInputData"
+    },
+    "output": {
+      "ref": "MyOutputData"
+    },
+    "hiveScript": "INSERT OVERWRITE TABLE ${output1} select * from ${input1};"
+  },
+  {
+    "id": "MyInputData",
+    "type": "S3DataNode",
+    "schedule": {
+      "ref": "MySchedule"
+    },
+    "directoryPath": "s3://test-hive/input"
+    }
+  },
+  {
+    "id": "MyOutputData",
+    "type": "S3DataNode",
+    "schedule": {
+      "ref": "MySchedule"
+    },
+    "directoryPath": "s3://test-hive/output"
+    }
+  },
+  ...

@@ -1,0 +1,44 @@
+{
+    "objects": [
+      {
+        "name": "MyEMRActivity",
+        "step": "/home/hadoop/contrib/streaming/hadoop-streaming.jar,-input,s3n://elasticmapreduce/samples/wordcount/input,-output,s3://eap-aabg-s3-landingzone/wordcount/output/#{@scheduledStartTime},-mapper,s3n://elasticmapreduce/samples/wordcount/wordSplitter.py,-reducer,aggregate",
+        "runsOn": {
+          "ref": "EmrClusterId_FCYRk"
+        },
+        "id": "EmrActivityId_0DPP5",
+        "type": "EmrActivity",
+        "onSuccess": {
+          "ref": "ActionId_gNpy6"
+        }
+      },
+      {
+        "failureAndRerunMode": "CASCADE",
+        "resourceRole": "DataPipelineDefaultResourceRole",
+        "role": "DataPipelineDefaultRole",
+        "pipelineLogUri": "s3://eap-aabg-s3-landingzone-02/data-pipeline/",
+        "scheduleType": "ONDEMAND",
+        "name": "Default",
+        "id": "Default"
+      },
+      {
+        "role": "DataPipelineDefaultRole",
+        "subject": "emr data pipeline",
+        "name": "MyEMRNotice",
+        "id": "ActionId_gNpy6",
+        "message": "your emr pipeline is done",
+        "type": "SnsAlarm",
+        "topicArn": "arn:aws:sns:us-east-1:868024899531:md-sns-topic-01"
+      },
+      {
+        "subnetId": "subnet-098bce4477059b600",
+        "enableDebugging": "true",
+        "name": "DefaultEmrCluster1",
+        "id": "EmrClusterId_FCYRk",
+        "type": "EmrCluster",
+        "region": "us-east-2",
+        "terminateAfter": "1 Hour"
+      }
+    ],
+    "parameters": []
+  }

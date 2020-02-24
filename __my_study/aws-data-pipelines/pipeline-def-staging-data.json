@@ -1,0 +1,34 @@
+{
+    "id": "AggregateFiles",
+    "type": "ShellCommandActivity",
+    "stage": "true",
+    "command": "cat ${INPUT1_STAGING_DIR}/part* > ${OUTPUT1_STAGING_DIR}/aggregated.csv",
+    "input": {
+      "ref": "MyInputData"
+    },
+    "output": {
+      "ref": "MyOutputData"
+    }
+  },
+
+  {
+    "id": "MyInputData",
+    "type": "S3DataNode",
+    "schedule": {
+      "ref": "MySchedule"
+    },
+    "filePath": "s3://my_bucket/source/#{format(@scheduledStartTime,'YYYY-MM-dd_HHmmss')}/items"
+    }
+  },
+  
+  {
+    "id": "MyOutputData",
+    "type": "S3DataNode",
+    "schedule": {
+      "ref": "MySchedule"
+    },
+    "directoryPath": "s3://my_bucket/destination/#{format(@scheduledStartTime,'YYYY-MM-dd_HHmmss')}"
+    }
+  }
+
+}

@@ -1,0 +1,42 @@
+{
+    "objects": [
+        {
+            "id": "Default",
+            "name": "Default",
+            "failureAndRerunMode": "CASCADE",
+            "resourceRole": "DataPipelineDefaultResourceRole",
+            "role": "DataPipelineDefaultRole",
+            "pipelineLogUri": "s3://eap-aabg-s3-landingzone-02/data-pipeline/",
+            "scheduleType": "ONDEMAND"
+        },
+        {
+            "id": "CliActivity",
+            "name": "CliActivity",
+            "runsOn": {
+                "ref": "Ec2Instance"
+            },
+            "type": "ShellCommandActivity",
+            "command": "(sudo yum -y update aws-cli) && (#{myAWSCLICmd})"
+        },
+        {
+            "id": "Ec2Instance",
+            "name": "Ec2Instance",
+            "subnetId": "subnet-098bce4477059b600",
+            "instanceType": "t2.medium",
+            "type": "Ec2Resource",
+            "region": "us-east-2",
+            "terminateAfter": "50 Minutes"
+        }
+    ],
+    "parameters": [
+        {
+            "id": "myAWSCLICmd",
+            "watermark": "aws [options] <command> <subcommand> [parameters]",
+            "description": "AWS CLI command",
+            "type": "String"
+        }
+    ],
+    "values": {
+        "myAWSCLICmd": "aws ec2 describe-instances --region us-east-2"
+    }
+}
