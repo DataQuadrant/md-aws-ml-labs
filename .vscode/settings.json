@@ -1,9 +1,9 @@
 {
-    "python.pythonPath": "/Users/marian.dumitrascu/opt/anaconda3/bin/python",
-    "python.dataScience.jupyterServerURI": "http://172.27.30.33:8888/",
+    "python.pythonPath": "/home/ec2-user/anaconda3/envs/chainer_p36/bin/python",
+    "python.dataScience.jupyterServerURI": "http://localhost:8888",
     "python.dataScience.searchForJupyter": true,
     "python.dataScience.enabled": true,
     "python.dataScience.sendSelectionToInteractiveWindow": true,
     "python.dataScience.allowUnauthorizedRemoteConnection": true
-    
+
 }

@@ -1,0 +1,15 @@
+--2020-02-25 23:04:19--  http://robjhyndman.com/data/gasoline.csv
+Resolving robjhyndman.com (robjhyndman.com)... 35.208.79.31
+Connecting to robjhyndman.com (robjhyndman.com)|35.208.79.31|:80... connected.
+HTTP request sent, awaiting response... 301 Moved Permanently
+Location: https://robjhyndman.com/data/gasoline.csv [following]
+--2020-02-25 23:04:20--  https://robjhyndman.com/data/gasoline.csv
+Connecting to robjhyndman.com (robjhyndman.com)|35.208.79.31|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 4530 (4.4K) [text/csv]
+Saving to: ‘gasoline.csv.2’
+
+     0K ....                                                  100%  571M=0s
+
+2020-02-25 23:04:20 (571 MB/s) - ‘gasoline.csv.2’ saved [4530/4530]
+
