@@ -34,4 +34,8 @@ docker build -t dataquadrant/sagemaker-notebook:all_md -f envs/docker/Dockerfile
 docker push dataquadrant/sagemaker-notebook:all_md
 
 
+docker commit --help
+docker commit 91190c9742ca dataquadrant/sagemaker-notebook:allall_w_pwd
+docker push dataquadrant/sagemaker-notebook:allall_w_pwd
+
 

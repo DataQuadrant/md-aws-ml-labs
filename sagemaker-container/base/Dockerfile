@@ -280,7 +280,7 @@ RUN conda install --yes "jupyterlab-git" && \
 
 USER $NB_UID
 
-ARG DOCKER_VERSION=19.03.5
+ARG DOCKER_VERSION=19.03.8
 
 # Install Docker cli, the actual docker daemon is expected to be running on host with a mount of /var/run/docker.sock
 RUN cd /tmp && \

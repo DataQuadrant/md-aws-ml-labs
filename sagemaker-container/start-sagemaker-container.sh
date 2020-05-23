@@ -12,11 +12,13 @@ docker run -itd \
         -e GRANT_SUDO=yes \
         --user root \
         -v ~/.aws:/home/ec2-user/.aws:ro \
+        -v ~/.ssh:/home/ec2-user/.ssh:ro \
         -v ~/.docker:/home/ec2-user/.docker:rw \
         -v ~/.kube:/home/ec2-user/.kube:rw \
         -v /var/run/docker.sock:/var/run/docker.sock \
-        -v /Users/marian.dumitrascu/Dropbox/Learn/AWS-ML-Certification/md-aws-ml-labs:/home/ec2-user/SageMaker \
-        -v /Users/marian.dumitrascu/Dropbox/Work/current/VISTRA/weather_history:/home/ec2-user/SageMaker/weather-history \
+        -v /Users/marian.dumitrascu/Dropbox/Learn/AWS-ML-Certification/md-aws-ml-labs:/home/ec2-user/SageMaker/AWS-ML-Certification \
+        -v /Users/marian.dumitrascu/Dropbox/Work/current/VISTRA:/home/ec2-user/SageMaker/VISTRA \
+        -v /Users/marian.dumitrascu/Dropbox/Work/current/TRUIST:/home/ec2-user/SageMaker/TRUIST \
         dataquadrant/sagemaker-notebook:allall_w_pwd start-notebook.sh --NotebookApp.password='sha1:1557010d897e:2ce4af9f0879352b4d76e179b8b703015b2a941f'
         # dataquadrant/sagemaker-notebook:all-02
 
