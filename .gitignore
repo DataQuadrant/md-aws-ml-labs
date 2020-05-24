@@ -255,6 +255,7 @@ Untitled*.ipynb
 *.base
 *.json
 *.jsonl
+*.jsonl.*
 *.test
 *.info
 *.item
@@ -266,6 +267,6 @@ Untitled*.ipynb
 *.rec
 u.*
 u?.*
-
-
-
+*.out
+__my_study/blazingtext/blazingtext_word2vec_subwords_text8/text8
+*.txt
