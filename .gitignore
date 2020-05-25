@@ -268,5 +268,8 @@ Untitled*.ipynb
 u.*
 u?.*
 *.out
-__my_study/blazingtext/blazingtext_word2vec_subwords_text8/text8
+text8
 *.txt
+dbpedia.train
+dbpedia.validation
+vectors.bin
