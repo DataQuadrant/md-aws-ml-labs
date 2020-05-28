@@ -273,3 +273,12 @@ text8
 dbpedia.train
 dbpedia.validation
 vectors.bin
+*.jar
+*.jar.1
+*.csv.1
+*.zip.1
+__my_study/sagemaker/seq2seq_translation_en-de/corpus.tc.de
+__my_study/sagemaker/seq2seq_translation_en-de/corpus.tc.en
+__my_study/sagemaker/seq2seq_translation_en-de/validation/*
+*.small
+__my_study/sagemaker/autopilot/Data sets/ClassifyRisk
