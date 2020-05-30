@@ -1,6 +1,6 @@
 {
-    "python.pythonPath": "/home/ec2-user/anaconda3/envs/chainer_p36/bin/python",
-    "python.dataScience.jupyterServerURI": "http://localhost:8888",
+    "python.pythonPath": "/Users/marian.dumitrascu/opt/anaconda3/envs/py38/bin/python",
+    "python.dataScience.jupyterServerURI": "http://localhost:8888/?token=null",
     "python.dataScience.searchForJupyter": true,
     "python.dataScience.enabled": true,
     "python.dataScience.sendSelectionToInteractiveWindow": true,
