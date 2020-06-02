@@ -16,6 +16,7 @@ docker run -itd \
         -v ~/.ssh:/home/ec2-user/.ssh:ro \
         -v ~/.docker:/home/ec2-user/.docker:rw \
         -v ~/.kube:/home/ec2-user/.kube:rw \
+        -v /tmp:/tmp \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -v /Users/marian.dumitrascu/Dropbox/Learn/AWS-ML-Certification/md-aws-ml-labs:/home/ec2-user/SageMaker/AWS-ML-Certification \
         dataquadrant/sagemaker-notebook:allall_w_pwd start-notebook.sh --NotebookApp.password='sha1:1557010d897e:2ce4af9f0879352b4d76e179b8b703015b2a941f'
