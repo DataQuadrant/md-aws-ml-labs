@@ -24,6 +24,7 @@ docker run -itd \
 
 # Alternatively:
 # docker-compose up sagemaker-notebook-container
+        # -v /tmp:/tmp \
         # -e GRANT_SUDO=yes \
         # -v /Users/marian.dumitrascu/Dropbox/Learn/AWS-ML-Certification/aws-sagem-nb-container:/home/ec2-user/SageMaker/sagemaker-notebook-container  \
         # -v /Users/marian.dumitrascu/Dropbox/Work/current/VISTRA:/home/ec2-user/SageMaker/VISTRA \
